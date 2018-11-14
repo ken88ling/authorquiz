@@ -47,6 +47,11 @@ const authors = [
   }
 ];
 
+const state = {
+  turnData: getTurnData(authors),
+  highlight: "collect"
+};
+
 function getTurnData(authors) {
   const allBooks = authors.reduce(function(p, c, i) {
     return p.concat(c.books);
@@ -58,11 +63,20 @@ function getTurnData(authors) {
     author: authors.find(author => author.books.some(title => title === answer))
   };
 }
-const state = {
-  turnData: getTurnData(authors),
-  highlight: "collect"
-};
 
-ReactDOM.render(<AuthorQuiz {...state} />, document.getElementById("root"));
+function onAnswerSelected(answer) {
+  const isCorrect = state.turnData.author.books.some(book => book === answer);
+  console.log("is correct", isCorrect);
+  state.highlight = isCorrect ? "correct" : "wrong";
+  render();
+}
 
+function render() {
+  ReactDOM.render(
+    <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} />,
+    document.getElementById("root")
+  );
+}
+
+render();
 serviceWorker.unregister();
